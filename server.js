@@ -9,7 +9,7 @@ const jobRoutes = require("./routes/jobs");
 const adminRoutes = require("./routes/admin");
 const recruiterRoutes = require("./routes/recruiter");
 const publicRoutes = require("./routes/public");
-const applicationRoutes = require("./routes/applications");
+const applicationRoutes = require("./routes/applicant");
 
 require("dotenv").config();
 
@@ -35,5 +35,5 @@ app.use("/api", userRoutes);
 app.use("/api", publicRoutes);
 
 app.use("/api/recruiter/jobs", recruiterRoutes);
-app.use("/api/applicant/applications", applicationRoutes);
+app.use("/api/applicant/", applicationRoutes);
 app.use("/api/admin", adminRoutes);

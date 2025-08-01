@@ -1,11 +1,27 @@
 const express = require("express");
-const ApplicationController = require("../controllers/application-controller");
+const ApplicantController = require("../controllers/application-controller");
 const AuthMiddleware = require("../middleware/auth-middleware");
 
 const router = express.Router();
 
-// ✅ View my applications (applicant only)
-router.post("/:id/apply", AuthMiddleware, ApplicationController.applyForJob);
-router.get("/my", AuthMiddleware, ApplicationController.getMyApplications);
+router.post("/:id/apply", AuthMiddleware, ApplicantController.applyForJob);
+
+router.get("/my", AuthMiddleware, ApplicantController.getMyApplications);
+router.post(
+  "/request-recruiter",
+  AuthMiddleware,
+  ApplicantController.requestRecruiter
+);
+router.get(
+  "/my-request-status",
+  AuthMiddleware,
+  ApplicantController.getRequestStatus
+);
+router.get(
+  "/my-pending-request",
+  AuthMiddleware,
+  ApplicantController.getPendingRequestStatus
+);
+router.put("/profile", AuthMiddleware, ApplicantController.updateProfile);
 
 module.exports = router;

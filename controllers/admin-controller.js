@@ -1,7 +1,7 @@
 // controllers/admin-controller.js
 const JobPost = require("../models/JobPost");
 const User = require("../models/User");
-
+const RecruiterRequest = require("../models/RecruiterRequest");
 const AdminController = {
   getAllJobsForAdmin: async (req, res) => {
     try {
@@ -67,23 +67,10 @@ const AdminController = {
       return res.status(500).json({ error: "Failed to fetch users" });
     }
   },
-
-  deleteUser: async (req, res) => {
-    try {
-      const user = await User.findByIdAndDelete(req.params.id);
-      if (!user) {
-        return res.status(404).json({ error: "User not found" });
-      }
-      return res.json({ message: "User deleted successfully" });
-    } catch (e) {
-      return res.status(500).json({ error: "Failed to delete user" });
-    }
-  },
   updateUserRole: async (req, res) => {
     try {
       const { role } = req.body;
       const allowedRoles = ["applicant", "recruiter", "admin"];
-
       if (!allowedRoles.includes(role)) {
         return res.status(400).json({ error: "Invalid role" });
       }
@@ -101,6 +88,73 @@ const AdminController = {
       return res.json({ message: "User role updated", user });
     } catch (e) {
       return res.status(500).json({ error: "Failed to update user role" });
+    }
+  },
+
+  deleteUser: async (req, res) => {
+    try {
+      const user = await User.findByIdAndDelete(req.params.id);
+      if (!user) {
+        return res.status(404).json({ error: "User not found" });
+      }
+      return res.json({ message: "User deleted successfully" });
+    } catch (e) {
+      return res.status(500).json({ error: "Failed to delete user" });
+    }
+  },
+
+  getAllRecruiterRequests: async (req, res) => {
+    try {
+      const { status } = req.query;
+
+      let filter = {};
+      if (status) {
+        filter.status = status;
+      }
+
+      const requests = await RecruiterRequest.find(filter)
+        .populate("user", "name email role")
+        .sort({ createdAt: -1 });
+
+      return res.json({ requests });
+    } catch (e) {
+      console.error("Recruiter Requests Error:", e.message);
+      return res.status(500).json({ error: "Failed to load requests" });
+    }
+  },
+  approveRecruiterRequest: async (req, res) => {
+    try {
+      const request = await RecruiterRequest.findById(req.params.id);
+      if (!request) return res.status(404).json({ error: "Request not found" });
+
+      const updatedUser = await User.findByIdAndUpdate(
+        request.user,
+        { role: "recruiter" },
+        { new: true }
+      );
+
+      request.status = "approved";
+      request.reviewedAt = new Date();
+      await request.save();
+
+      res.json({ message: "Request approved successfully" });
+    } catch (e) {
+      res.status(500).json({ error: "Approval failed" });
+    }
+  },
+
+  rejectRecruiterRequest: async (req, res) => {
+    try {
+      const request = await RecruiterRequest.findById(req.params.id);
+      if (!request) return res.status(404).json({ error: "Request not found" });
+
+      request.status = "rejected";
+      request.reviewedAt = new Date();
+      await request.save();
+
+      res.json({ message: "Request rejected successfully" });
+    } catch (e) {
+      res.status(500).json({ error: "Rejection failed" });
     }
   },
 };

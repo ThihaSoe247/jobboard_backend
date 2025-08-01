@@ -5,6 +5,9 @@ const Application = require("../models/Application");
 
 const RecruiterController = {
   createJob: async (req, res) => {
+    console.log("🎯 Incoming job creation request");
+    console.log("📦 Request body:", req.body);
+    console.log("👤 Request user:", req.userId);
     try {
       const user = await User.findById(req.userId);
       if (!user || user.role !== "recruiter") {
@@ -99,11 +102,9 @@ const RecruiterController = {
       const jobId = req.params.jobId;
       const job = await JobPost.findOne({ _id: jobId, postedBy: req.userId });
       if (!job) {
-        return res
-          .status(403)
-          .json({
-            error: "You are not authorized to view this job's applicants",
-          });
+        return res.status(403).json({
+          error: "You are not authorized to view this job's applicants",
+        });
       }
       const applications = await Application.find({ job: jobId })
         .populate("applicant", "name email")

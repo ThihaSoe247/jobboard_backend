@@ -27,6 +27,7 @@ router.put(
   isAdmin,
   AdminController.unapproveJob
 );
+
 router.get("/users", AuthMiddleware, isAdmin, AdminController.getAllUsers);
 
 router.delete(
@@ -35,10 +36,33 @@ router.delete(
   isAdmin,
   AdminController.deleteUser
 );
+
 router.put(
-  "/users/:id",
+  "/users/:id/role",
   AuthMiddleware,
   isAdmin,
   AdminController.updateUserRole
 );
+
+router.get(
+  "/recruiter-requests",
+  AuthMiddleware,
+  isAdmin,
+  AdminController.getAllRecruiterRequests
+);
+
+router.put(
+  "/recruiter-requests/:id/approve",
+  AuthMiddleware,
+  isAdmin,
+  AdminController.approveRecruiterRequest
+);
+
+router.put(
+  "/recruiter-requests/:id/reject",
+  AuthMiddleware,
+  isAdmin,
+  AdminController.rejectRecruiterRequest
+);
+
 module.exports = router;
