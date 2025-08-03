@@ -22,7 +22,7 @@ mongoose.connect(process.env.MONGO_URL).then(() => {
   });
 });
 
-app.use(cors());
+app.use(cors({ origin: "*", credentials: true }));
 app.use(express.json());
 app.use(morgan("dev"));
 app.use(cookieParser());

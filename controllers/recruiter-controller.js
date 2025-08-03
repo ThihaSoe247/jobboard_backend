@@ -5,9 +5,7 @@ const Application = require("../models/Application");
 
 const RecruiterController = {
   createJob: async (req, res) => {
-    console.log("🎯 Incoming job creation request");
-    console.log("📦 Request body:", req.body);
-    console.log("👤 Request user:", req.userId);
+
     try {
       const user = await User.findById(req.userId);
       if (!user || user.role !== "recruiter") {
