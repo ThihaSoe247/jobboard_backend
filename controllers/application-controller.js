@@ -63,6 +63,7 @@ const ApplicantController = {
   },
   getMyApplications: async (req, res) => {
     try {
+      // Check applicant role
       const user = await User.findById(req.userId);
       if (!user || user.role !== "applicant") {
         return res
@@ -70,18 +71,21 @@ const ApplicantController = {
           .json({ error: "Only applicants can view their applications" });
       }
 
+      // Get applications, populate job info
       const applications = await Application.find({ applicant: req.userId })
-        .populate("job") // populate job info
+        .populate("job", "title company salary location") // ✅ populate key job fields
         .sort({ appliedAt: -1 });
 
-      return res.json({ applications });
+      // Optional: filter out null jobs (deleted)
+      const validApplications = applications.filter((a) => a.job !== null);
+
+      return res.json({ applications: validApplications });
     } catch (e) {
       console.error("Get Applications Error:", e.message);
       return res.status(500).json({ error: "Failed to load applications" });
     }
   },
 
-  // POST /api/applicant/request-recruiter
   requestRecruiter: async (req, res) => {
     try {
       const existing = await RecruiterRequest.findOne({ user: req.userId });
