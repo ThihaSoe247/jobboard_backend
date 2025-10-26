@@ -10,6 +10,7 @@ const adminRoutes = require("./routes/admin");
 const recruiterRoutes = require("./routes/recruiter");
 const publicRoutes = require("./routes/public");
 const applicationRoutes = require("./routes/applicant");
+import uploadRoutes from "./routes/uploadRoutes.js";
 
 require("dotenv").config();
 
@@ -37,3 +38,5 @@ app.use("/api", publicRoutes);
 app.use("/api/recruiter/jobs", recruiterRoutes);
 app.use("/api/applicant/", applicationRoutes);
 app.use("/api/admin", adminRoutes);
+app.use("/api/upload", uploadRoutes);
+app.use("/uploads", express.static("uploads")); // serve uploaded files

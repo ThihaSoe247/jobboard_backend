@@ -73,10 +73,9 @@ const ApplicantController = {
 
       // Get applications, populate job info
       const applications = await Application.find({ applicant: req.userId })
-        .populate("job", "title company salary location") // ✅ populate key job fields
+        .populate("job", "title company salary location")
         .sort({ appliedAt: -1 });
 
-      // Optional: filter out null jobs (deleted)
       const validApplications = applications.filter((a) => a.job !== null);
 
       return res.json({ applications: validApplications });

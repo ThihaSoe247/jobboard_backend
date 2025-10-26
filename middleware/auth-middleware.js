@@ -14,14 +14,14 @@ const AuthMiddleware = async (req, res, next) => {
 
   try {
     const decoded = jwt.verify(token, process.env.JWT_SECRET);
-    const user = await User.findById(decoded._id); // ✅ fetch full user
+    const user = await User.findById(decoded._id);
 
     if (!user) {
       return res.status(401).json({ message: "User not found" });
     }
 
     req.userId = user._id;
-    req.userRole = user.role; // ✅ attach user role
+    req.userRole = user.role;
 
     next();
   } catch (err) {
